@@ -85,112 +85,96 @@ JumpToButtonEqual: LJMP ButtonEqual
 ButtonON:
    SETB P2.0
    LJMP MainLoop
-RET
 
 ButtonEqual:
    MOV R0, #'='
    CALL LCD_Display
    CALL CalculateResult
-   LJMP MainLoop
-RET
+   JMP MainLoop
 
 ButtonPlus:
    MOV R0, #'+'
    CALL HandleOperation
    CALL LCD_Display
-   LJMP MainLoop
-RET
+   JMP MainLoop
 
 ButtonMinus:
    MOV R0, #'-'
    CALL HandleOperation
    CALL LCD_Display
-   LJMP MainLoop
-RET
+   JMP MainLoop
 
 ButtonMultiply:
    MOV R0, #'*'
    CALL HandleOperation
    CALL LCD_Display
-   LJMP MainLoop
-RET
+   JMP MainLoop
 
 ButtonDivide:
    MOV R0, #'/'
    CALL HandleOperation
    CALL LCD_Display
-   LJMP MainLoop
-RET
+   JMP MainLoop
 
 Button0:
    MOV R0, #'0'
    CALL HandleNumber
    CALL LCD_Display
-   LJMP MainLoop
-RET
+   JMP MainLoop
 
 Button1:
    MOV R0, #'1'
    CALL HandleNumber
    CALL LCD_Display
-   LJMP MainLoop
-RET
+   JMP MainLoop
 
 Button2:
    MOV R0, #'2'
    CALL HandleNumber
    CALL LCD_Display
-   LJMP MainLoop
-RET
+   JMP MainLoop
 
 Button3:
    MOV R0, #'3'
    CALL HandleNumber
    CALL LCD_Display
-   LJMP MainLoop
-RET
+   JMP MainLoop
 
 Button4:
    MOV R0, #'4'
    CALL HandleNumber
    CALL LCD_Display
-   LJMP MainLoop
-RET
+   JMP MainLoop
 
 Button5:
    MOV R0, #'5'
    CALL HandleNumber
    CALL LCD_Display
-   LJMP MainLoop
-RET
+   JMP MainLoop
 
 Button6:
    MOV R0, #'6'
    CALL HandleNumber
    CALL LCD_Display
-   LJMP MainLoop
-RET
+   JMP MainLoop
 
 Button7:
    MOV R0, #'7'
    CALL HandleNumber
    CALL LCD_Display
-   LJMP MainLoop
-RET
+   JMP MainLoop
 
 Button8:
    MOV R0, #'8'
    CALL HandleNumber
    CALL LCD_Display
-   LJMP MainLoop
-RET
+   JMP MainLoop
 
 Button9:
    MOV R0, #'9'
    CALL HandleNumber
    CALL LCD_Display
-   LJMP MainLoop
-RET
+   JMP MainLoop
 
 ; LCD functions
 LCD_Display:   
@@ -391,7 +375,7 @@ Next2:
    CALL LCD_Display
    JZ EndNext	
    INC R7	
-   SJMP Next2
+   JMP Next2
 EndNext:	
    RET			
 
