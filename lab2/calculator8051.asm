@@ -1,90 +1,85 @@
-ORG 00H
+$NOMOD51
+$INCLUDE (8051.MCU)
 
-   ; Initialize LCD
-   MOV R0, #38H
-   CALL LCD_Command
-   MOV R0, #0EH
-   CALL LCD_Command
-   MOV R0, #06H
-   CALL LCD_Command
-   MOV R0, #80H
-   CALL LCD_Command
-   MOV R0, #01H
-   CALL LCD_Command
-
+   
+ORG 000H
+   
+   MOV TMOD, #21h      ; Timer 1 in Mode 2 (8-bit auto-reload)
+   MOV TH1, #0FDh      ; 9600 baud rate with 11.0592 MHz crystal
+   ;MOV TL1, #0FDh
+   SETB TR1            ; Start Timer 1
+   MOV SCON, #50h      ; Mode 1, 8-bit UART, REN enabled
    ; Initialize variables and ports
    MOV R4, #00H
-   MOV P2, #00H
-   MOV P3, #0FEH
+   MOV P3, #00H
+   MOV P2, #0FEH
    MOV R3, #00H
    MOV R1, #00H
    MOV R2, #'+'
-   
+
 MainLoop:
-   JNB P3.0, CheckColumn1
-   JNB P3.1, CheckColumn2
-   JNB P3.2, CheckColumn3
-   JNB P3.3, CheckColumn4
-   SJMP MainLoop
+   JNB P2.0, CheckColumn1
+   JNB P2.1, CheckColumn2
+   JNB P2.2, CheckColumn3
+   JNB P2.3, CheckColumn4
+   JMP MainLoop
 
 CheckColumn1:
-   JNB P3.4, JumpToButtonON
-   JNB P3.5, JumpToButton0
-   JNB P3.6, JumpToButtonEqual
-   JNB P3.7, JumpToButtonPlus
-   SETB P3.0
-   CLR P3.1
+   JNB P2.4, ButtonON
+   JNB P2.5, Button0
+   JNB P2.6, ButtonEqual
+   JNB P2.7, ButtonPlus
+   SETB P2.0
+   CLR P2.1
    SJMP MainLoop
 
 CheckColumn2:
-   JNB P3.4, JumpToButton1
-   JNB P3.5, JumpToButton2
-   JNB P3.6, JumpToButton3
-   JNB P3.7, JumpToButtonMinus
-   SETB P3.1
-   CLR P3.2
+   JNB P2.4, Button1
+   JNB P2.5, Button2
+   JNB P2.6, Button3
+   JNB P2.7, ButtonMinus
+   SETB P2.1
+   CLR P2.2
    SJMP MainLoop
 
 CheckColumn3:
-   JNB P3.4, JumpToButton4
-   JNB P3.5, JumpToButton5
-   JNB P3.6, JumpToButton6
-   JNB P3.7, JumpToButtonMultiply
-   SETB P3.2
-   CLR P3.3
+   JNB P2.4, Button4
+   JNB P2.5, Button5
+   JNB P2.6, Button6
+   JNB P2.7, ButtonMultiply
+   SETB P2.2
+   CLR P2.3
    SJMP MainLoop
 
 CheckColumn4:
-   JNB P3.4, JumpToButton7
-   JNB P3.5, JumpToButton8
-   JNB P3.6, JumpToButton9
-   JNB P3.7, JumpToButtonDivide
-   SETB P3.3
-   CLR P3.0
+   JNB P2.4, Button7
+   JNB P2.5, Button8
+   JNB P2.6, Button9
+   JNB P2.7, ButtonDivide
+   SETB P2.3
+   CLR P2.0
    LJMP MainLoop
 
 ; Button jump labels
-JumpToButtonON: LJMP ButtonON
-JumpToButton0: LJMP Button0
-JumpToButton1: LJMP Button1
-JumpToButton2: LJMP Button2
-JumpToButton3: LJMP Button3
-JumpToButton4: LJMP Button4
-JumpToButton5: LJMP Button5
-JumpToButton6: LJMP Button6
-JumpToButton7: LJMP Button7
-JumpToButton8: LJMP Button8
-JumpToButton9: LJMP Button9
-JumpToButtonPlus: LJMP ButtonPlus
-JumpToButtonMinus: LJMP ButtonMinus
-JumpToButtonMultiply: LJMP ButtonMultiply
-JumpToButtonDivide: LJMP ButtonDivide
-JumpToButtonEqual: LJMP ButtonEqual
+ButtonON: 
+   CALL ClearScreen
+   JMP MainLoop
 
-; Button handlers
-ButtonON:
-   SETB P2.0
-   LJMP MainLoop
+ButtonPlus:
+   MOV R0, #'+'
+   CALL Readoperator
+
+ButtonMinus:
+   MOV R0, #'-'
+   CALL Readoperator
+
+ButtonMultiply:
+   MOV R0, #'*'
+   CALL Readoperator
+
+ButtonDivide:
+   MOV R0, #'/'
+   CALL Readoperator
 
 ButtonEqual:
    MOV R0, #'='
@@ -92,115 +87,72 @@ ButtonEqual:
    CALL CalculateResult
    JMP MainLoop
 
-ButtonPlus:
-   MOV R0, #'+'
-   CALL HandleOperation
-   CALL LCD_Display
-   JMP MainLoop
-
-ButtonMinus:
-   MOV R0, #'-'
-   CALL HandleOperation
-   CALL LCD_Display
-   JMP MainLoop
-
-ButtonMultiply:
-   MOV R0, #'*'
-   CALL HandleOperation
-   CALL LCD_Display
-   JMP MainLoop
-
-ButtonDivide:
-   MOV R0, #'/'
-   CALL HandleOperation
-   CALL LCD_Display
-   JMP MainLoop
-
 Button0:
    MOV R0, #'0'
-   CALL HandleNumber
-   CALL LCD_Display
-   JMP MainLoop
-
+   CALL Readnum
+   
 Button1:
    MOV R0, #'1'
-   CALL HandleNumber
-   CALL LCD_Display
-   JMP MainLoop
-
+   CALL Readnum
+   
 Button2:
    MOV R0, #'2'
-   CALL HandleNumber
-   CALL LCD_Display
-   JMP MainLoop
-
+   CALL Readnum
+   
 Button3:
    MOV R0, #'3'
-   CALL HandleNumber
-   CALL LCD_Display
-   JMP MainLoop
-
+   CALL Readnum
+   
 Button4:
    MOV R0, #'4'
-   CALL HandleNumber
-   CALL LCD_Display
-   JMP MainLoop
-
+   CALL Readnum
+   
 Button5:
    MOV R0, #'5'
-   CALL HandleNumber
-   CALL LCD_Display
-   JMP MainLoop
-
+   CALL Readnum
+   
 Button6:
    MOV R0, #'6'
-   CALL HandleNumber
-   CALL LCD_Display
-   JMP MainLoop
-
+   CALL Readnum
+   
 Button7:
    MOV R0, #'7'
-   CALL HandleNumber
-   CALL LCD_Display
-   JMP MainLoop
-
+   CALL Readnum
+   
 Button8:
    MOV R0, #'8'
-   CALL HandleNumber
-   CALL LCD_Display
-   JMP MainLoop
-
+   CALL Readnum
+   
 Button9:
    MOV R0, #'9'
-   CALL HandleNumber
+   CALL Readnum
+
+Readoperator:
+   CALL HandleOperation
    CALL LCD_Display
    JMP MainLoop
 
+Readnum:
+   CALL HandleNumber
+   CALL LCD_Display
+   JMP MainLoop
 ; LCD functions
 LCD_Display:   
-   MOV P1, R0
-   SETB P2.1  
-   SETB P2.2
-   CLR P2.2
-   CALL Delay
-   RET
-
-LCD_Command:
-   MOV P1, R0
-   CLR P2.1
-   SETB P2.2
-   CLR P2.2
+   MOV SBUF,R0
+   SETB P3.1
+   CLR TI
+   JNB TI, $
    CALL Delay
    RET
 
 ; Number handling
 HandleNumber: 
-   JB P2.7, SecondNumber
-   JB P2.6, NewDigit
+   JB P3.7, SecondNumber
+   JB P3.6, NewDigit
    MOV A, R0
    SUBB A, #30H
    MOV R1, A
-   SETB P2.6
+   SETB P3.6
    RET
 
 NewDigit: 
@@ -215,15 +167,15 @@ NewDigit:
    ADD A, R7
    JC JumpOverflow
    MOV R1, A
-   SETB P2.6
+   SETB P3.6
    RET
 
 SecondNumber:
-   JB P2.6, NewDigit2
+   JB P3.6, NewDigit2
    MOV A, R0
    SUBB A, #30H
    MOV R3, A
-   SETB P2.6
+   SETB P3.6
    RET
 
 NewDigit2: 
@@ -238,13 +190,13 @@ NewDigit2:
    ADD A, R7
    JC JumpOverflow
    MOV R3, A
-   SETB P2.6
+   SETB P3.6
    RET
 
 ; Operation handling
 HandleOperation:
-   SETB P2.7
-   CLR P2.6
+   SETB P3.7
+   CLR P3.6
    MOV A, R0
    MOV R2, A
    RET
@@ -294,7 +246,6 @@ PrintResult:
    CJNE R3, #0D, NormalResult
    CJNE R2, #'/', NormalResult
    MOV R0, #0C0H
-   CALL LCD_Command
    MOV DPTR, #ErrorMsg
    CLR C
    MOV R7, #0D
@@ -363,7 +314,6 @@ LessThan10:
 
 Overflow:
    MOV R0, #0C0H
-   CALL LCD_Command
    MOV DPTR, #OverflowMsg
    CLR C	
    MOV R7, #0D
@@ -381,7 +331,9 @@ EndNext:
 
 PrintDecimal:
    MOV R0, #'.'	
-   CALL LCD_Display	
+   CALL LCD_Display
+   MOV R6,#1
+LOOPD:
    MOV A, R5
    MOV B, #10D
    MUL AB	
@@ -389,8 +341,15 @@ PrintDecimal:
    DIV AB	
    ADD A, #30H		
    MOV R0, A	
-   CALL LCD_Display		
-   RET			
+   CALL LCD_Display
+   MOV R5,B
+   MOV A,#5
+   SUBB A,R6
+   JZ NEXTD
+   INC R6
+   CJNE R5,#0,LOOPD
+NEXTD:
+   RET		
 
 Delay:
    MOV 62, #2	
@@ -403,7 +362,18 @@ Delay2:
    DJNZ 62, Delay1
    RET
 
-ErrorMsg: DB 'ERROR: DIV BY 0'
-OverflowMsg: DB 'OVERFLOW!'
+ErrorMsg: DB 'ERROR: DIV BY 0',0
 
+OverflowMsg: DB 'OVERFLOW!',0
+
+ClearScreen:
+   MOV SBUF, #254
+   CLR TI
+   JNB TI, $
+   MOV SBUF, #1
+   CLR TI
+   JNB TI, $
+   JNB P2.4, $
+   RET
+   
 END
