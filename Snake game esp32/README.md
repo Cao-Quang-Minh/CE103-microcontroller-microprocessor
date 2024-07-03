@@ -38,7 +38,9 @@ To control the OLED SSD1306 screen on the ESP32 microcontroller using ESP-IDF, u
 Driver installation guide: https://github.com/nopnop2002/esp-idf-ssd1306
 
 Final product
+
 ![image](https://github.com/Cao-Quang-Minh/CE103-microcontroller-microprocessor/assets/63891954/d7e0ed64-6794-41ab-aed4-39363c32876a)
+
 ![image](https://github.com/Cao-Quang-Minh/CE103-microcontroller-microprocessor/assets/63891954/27e3d4fc-1190-4872-9641-1937cb2a9e41)
 
 
