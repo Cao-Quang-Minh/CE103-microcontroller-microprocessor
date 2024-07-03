@@ -1,3 +1,5 @@
+In this project, we programmed with the ESP32 microcontroller and used the ESP-IDF as our development environment. The core content of the project involves utilizing the I/O pins of the ESP32 to control an LED screen. Specifically, we are experimenting with implementing the classic game "Snake" on the screen. This project allows us to explore the capabilities of the ESP32, including how it interfaces with external components like the OLED display, and provides an opportunity to apply our knowledge in embedded systems programming to create an interactive application. Through this project, we aim to demonstrate the versatility and potential of the ESP32 microcontroller in handling complex tasks, such as game development, which requires precise timing and control over hardware resources.
+
 Components Used:
 
 1 ESP32
